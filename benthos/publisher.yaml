@@ -1,0 +1,31 @@
+http:
+  address: 0.0.0.0:4196
+input:
+  label: ""
+  http_server:
+    address: 0.0.0.0:8081
+    path: /publish
+    allowed_verbs:
+      - POST
+    timeout: 5s
+    rate_limit: ""
+output:
+  label: ""
+  kafka:
+    addresses:
+      - localhost:9092
+    topic: seek
+    client_id: seek_client_id
+    target_version: 1.0.0
+    key: ""
+    partitioner: fnv1a_hash
+    compression: none
+    static_headers: {}
+    metadata:
+      exclude_prefixes: []
+    max_in_flight: 1
+    batching:
+      count: 0
+      byte_size: 0
+      period: ""
+      check: ""

@@ -1,13 +1,13 @@
 input:
   label: ""
-  http_server:
-    address: 0.0.0.0:8080
-    path: /post
-    ws_path: /post/ws
-    allowed_verbs:
-      - POST
-    timeout: 5s
-    rate_limit: ""
+  kafka:
+    addresses:
+      - localhost:9092
+    topics: ["seek"]
+    target_version: 1.0.0
+    consumer_group: seek
+    client_id: seek_client_id
+    checkpoint_limit: 1
 output:
   label: ""
   elasticsearch:
