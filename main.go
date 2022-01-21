@@ -1,42 +1,37 @@
 package main
 
 import (
-	"bytes"
 	"context"
-	"encoding/json"
 	"fmt"
-	"io"
 	"log"
 	"net/http"
 	"regexp"
 	"strings"
 	"time"
+
+	"github.com/pinkbottle/seek/wiki"
 )
 
 func main() {
 	for {
-		req, err := http.NewRequestWithContext(context.Background(), "GET", "https://en.wikipedia.org/wiki/Special:Random", nil)
+		sink, err := wiki.NewSink(http.DefaultClient)
 		if err != nil {
-			log.Fatalf("error creating request: %v", err)
+			log.Fatalf("error creating sink: %v", err)
 		}
 
-		res, err := http.DefaultClient.Do(req)
+		ctx := context.Background()
+		article, err := sink.GetRandomArticle(ctx)
 		if err != nil {
-			log.Fatalf("error sending request: %v", err)
+			log.Fatalf("error getting random article: %v", err)
 		}
-
-		b, err := io.ReadAll(res.Body)
-		if err != nil {
-			log.Fatalf("error reading response: %v", err)
-		}
-
-		b, _ = json.Marshal(map[string]string{"message": string(b), "source": "https://en.wikipedia.org/wiki/Special:Random"})
-		res, err = http.Post("http://localhost:8081/publish", "application/json", bytes.NewReader(b))
-		if err != nil {
-			log.Fatalf("Error: %v", err)
-		}
-		log.Printf("%d", res.StatusCode)
-		res.Body.Close()
+		log.Printf("got article: %v", article)
+		// b, _ := json.Marshal(article)
+		// res, err := http.Post("http://localhost:8081/publish", "application/json", bytes.NewReader(b))
+		// if err != nil {
+		// 	log.Fatalf("Error: %v", err)
+		// }
+		// log.Printf("%d", res.StatusCode)
+		// res.Body.Close()
 		time.Sleep(time.Second * 10)
 	}
 }
