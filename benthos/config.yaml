@@ -1,0 +1,26 @@
+input:
+  label: ""
+  http_server:
+    address: 0.0.0.0:8080
+    path: /post
+    ws_path: /post/ws
+    allowed_verbs:
+      - POST
+    timeout: 5s
+    rate_limit: ""
+output:
+  label: ""
+  elasticsearch:
+    urls:
+      - http://localhost:9200
+    index: sap
+    id: ${!count("elastic_ids")}-${!timestamp_unix()}
+    type: doc
+    max_in_flight: 1
+    sniff: false
+    action: index
+    batching:
+      count: 0
+      byte_size: 0
+      period: ""
+      check: ""
