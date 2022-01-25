@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"regexp"
 	"strings"
+	"sync/atomic"
 
 	"golang.org/x/sync/errgroup"
 )
@@ -85,19 +86,15 @@ func (s *Sink) Explore(ctx context.Context, root string) error {
 	}
 
 	log.Printf("found %d links", len(init))
-	jobs := make(chan string)
+	jobs := make(chan string, concurrent)
 	var g errgroup.Group
 
-	g.Go(func() error {
-		log.Printf("starting loop")
-		return s.loop(ctx, jobs)
-	})
+	g.Go(func() error { return s.loop(ctx, jobs) })
 
 	for _, url := range init {
 		jobs <- url
 	}
-
-	g.Go(func() error { return s.loop(ctx, jobs) })
+	log.Printf("starting %d workers", concurrent)
 
 	if err := g.Wait(); err != nil {
 		return fmt.Errorf("error waiting for goroutines: %v", err)
@@ -107,19 +104,19 @@ func (s *Sink) Explore(ctx context.Context, root string) error {
 }
 
 func (s *Sink) loop(ctx context.Context, jobs chan string) error {
-	sem := make(chan struct{}, concurrent)
-	for i := 0; i < concurrent; i++ {
-		sem <- struct{}{}
-	}
-
+	log.Printf("starting loop")
+	var counter int32 = 0
 	for {
+		log.Println("waiting for job")
 		select {
 		case <-ctx.Done():
 			log.Printf("loop: context done")
 			return nil
 		case job := <-jobs:
+			log.Println(len(jobs))
+			currentCount := atomic.AddInt32(&counter, 1)
+			log.Printf("starting job %s, current workers %d", job, currentCount)
 			go func() {
-				<-sem
 				links, err := s.crawlPage(ctx, job)
 				if err != nil {
 					log.Printf("loop: error crawling page %s: %v", job, err)
@@ -129,7 +126,7 @@ func (s *Sink) loop(ctx context.Context, jobs chan string) error {
 					log.Printf("loop: added link %s", link)
 				}
 				log.Printf("loop: finished crawling page %s", job)
-				sem <- struct{}{}
+				atomic.AddInt32(&counter, -1)
 			}()
 		}
 	}
