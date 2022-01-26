@@ -11,7 +11,8 @@ import (
 
 func main() {
 	c := http.Client{Timeout: time.Second * 10}
-	sink, err := wiki.NewSink(&c)
+	maxWorkers := 3
+	sink, err := wiki.NewSink(&c, maxWorkers)
 	if err != nil {
 		log.Fatalf("error creating sink: %v", err)
 	}
