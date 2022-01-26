@@ -3,13 +3,16 @@ package wiki
 import (
 	"context"
 	"fmt"
+	"sync"
 
 	"github.com/gocolly/colly"
 	"github.com/pinkbottle/seek"
 )
 
 type Sink struct {
-	c *colly.Collector
+	c       *colly.Collector
+	visited map[string]struct{}
+	mu      sync.Mutex
 }
 
 func NewSink(c colly.Collector, res chan<- seek.Resource) *Sink {
@@ -25,16 +28,24 @@ func NewSink(c colly.Collector, res chan<- seek.Resource) *Sink {
 		res <- result
 	})
 
-	// c.OnRequest(func(r *colly.Request) {
-	// 	fmt.Println("Visiting", r.URL)
-	// })
-
 	return &Sink{
-		c: &c,
+		c:       &c,
+		visited: map[string]struct{}{},
 	}
 }
 
 func (s *Sink) Start(ctx context.Context, root string) error {
+	s.c.OnRequest(func(r *colly.Request) {
+		s.mu.Lock()
+		defer s.mu.Unlock()
+		url := r.URL.String()
+		if _, ok := s.visited[url]; ok {
+			fmt.Println("skipping", url)
+			r.Abort()
+			return
+		}
+		s.visited[url] = struct{}{}
+	})
 	if err := s.c.Visit(root); err != nil {
 		return fmt.Errorf("failed to start visitor: %w", err)
 	}

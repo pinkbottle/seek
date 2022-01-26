@@ -5,7 +5,7 @@ Content-Type: application/json
   "query": {
     "fuzzy": {
       "Content": {
-        "value": "name"
+        "value": "soccer football sports volleyball"
       }
     }
   }

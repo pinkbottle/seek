@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"flag"
 	"fmt"
 	"log"
 	"net/http"
@@ -16,9 +17,12 @@ import (
 
 var (
 	publisher = "http://localhost:8080/publish"
+	root      = flag.String("root", "https://en.wikipedia.org/wiki/Main_Page", "root url")
 )
 
 func main() {
+	flag.Parse()
+
 	c := colly.NewCollector(func(c *colly.Collector) {
 		c.MaxDepth = 5
 	})
@@ -58,7 +62,7 @@ func main() {
 	}()
 
 	ws := wiki.NewSink(*c, res)
-	if err := ws.Start(context.Background(), "https://en.wikipedia.org/wiki/Main_Page"); err != nil {
+	if err := ws.Start(context.Background(), *root); err != nil {
 		log.Fatalf("failed to start: %v", err)
 	}
 }

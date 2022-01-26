@@ -34,13 +34,20 @@ func main() {
 	s := &Search{
 		client: es,
 	}
-	results := s.search(strings.Join(input, " "))
+	results := make([]*seek.Result, 0)
 
+	for _, phrase := range input {
+		results = append(results, s.search(phrase)...)
+	}
+
+	if len(results) == 0 {
+		fmt.Println("No results found")
+		return
+	}
 	//sort results by score
 	sort.Slice(results, func(i, j int) bool {
 		return results[i].Score > results[j].Score
 	})
-
 	for _, r := range results[0:3] {
 		fmt.Printf("%s (%f)\n\n%s\n%s\n\n", r.URL, r.Score, r.Content, strings.Repeat(".", 37))
 	}
