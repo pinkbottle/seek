@@ -5,20 +5,20 @@ import (
 	"fmt"
 
 	"github.com/gocolly/colly"
-	"github.com/pinkbottle/seek/seek"
+	"github.com/pinkbottle/seek"
 )
 
 type Sink struct {
 	c *colly.Collector
 }
 
-func NewSink(c colly.Collector, res chan<- seek.Result) *Sink {
+func NewSink(c colly.Collector, res chan<- seek.Resource) *Sink {
 	c.OnHTML("a[href]", func(e *colly.HTMLElement) {
 		e.Request.Visit(e.Attr("href"))
 	})
 
 	c.OnHTML("p", func(h *colly.HTMLElement) {
-		result := seek.Result{
+		result := seek.Resource{
 			Content: h.Text,
 			URL:     h.Request.URL.String(),
 		}

@@ -7,10 +7,11 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"sort"
 	"strings"
 
 	"github.com/elastic/go-elasticsearch"
-	"github.com/pinkbottle/seek/seek"
+	"github.com/pinkbottle/seek"
 )
 
 var (
@@ -34,11 +35,15 @@ func main() {
 		client: es,
 	}
 	results := s.search(strings.Join(input, " "))
-	for _, r := range results {
-		fmt.Printf("%s\n\n%s\n%s\n\n", r.URL, r.Content, strings.Repeat(".", 37))
-	}
-	log.Println(strings.Repeat("=", 37))
 
+	//sort results by score
+	sort.Slice(results, func(i, j int) bool {
+		return results[i].Score > results[j].Score
+	})
+
+	for _, r := range results[0:3] {
+		fmt.Printf("%s (%f)\n\n%s\n%s\n\n", r.URL, r.Score, r.Content, strings.Repeat(".", 37))
+	}
 }
 
 type Search struct {
@@ -98,10 +103,12 @@ func (s *Search) search(phrase string) []*seek.Result {
 		source := hit.(map[string]interface{})["_source"]
 		url := source.(map[string]interface{})["URL"]
 		content := source.(map[string]interface{})["Content"]
+		score := hit.(map[string]interface{})["_score"]
 
 		results = append(results, &seek.Result{
 			URL:     url.(string),
 			Content: content.(string),
+			Score:   score.(float64),
 		})
 	}
 

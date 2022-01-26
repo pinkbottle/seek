@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/gocolly/colly"
-	"github.com/pinkbottle/seek/seek"
+	"github.com/pinkbottle/seek"
 	"github.com/pinkbottle/seek/wiki"
 )
 
@@ -26,7 +26,7 @@ func main() {
 		Timeout: 3 * time.Second,
 	}
 
-	res := make(chan seek.Result)
+	res := make(chan seek.Resource)
 	go func() {
 		for r := range res {
 			b, err := json.Marshal(r)

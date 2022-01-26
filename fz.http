@@ -1,4 +1,4 @@
-GET http://localhost:9200/sap/_search HTTP/1.1
+GET http://localhost:9200/seek/_search HTTP/1.1
 Content-Type: application/json
 
 {
