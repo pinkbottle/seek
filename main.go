@@ -1,17 +1,28 @@
 package main
 
 import (
-	"bytes"
-	"encoding/json"
+	"context"
+	"fmt"
 	"log"
-	"net/http"
+
+	"github.com/gocolly/colly"
+	"github.com/pinkbottle/seek/seek"
+	"github.com/pinkbottle/seek/wiki"
 )
 
 func main() {
-	b, _ := json.Marshal(map[string]string{"hello": "world"})
-	res, err := http.Post("http://localhost:8081/publish", "application/json", bytes.NewReader(b))
-	if err != nil {
-		log.Fatalf("Error: %v", err)
+	c := colly.NewCollector(func(c *colly.Collector) {
+		c.MaxDepth = 5
+	})
+	res := make(chan seek.Result)
+	go func() {
+		for r := range res {
+			fmt.Printf("[%s] : \n%s\n", r.URL, r.Content)
+		}
+	}()
+
+	ws := wiki.NewSink(*c, res)
+	if err := ws.Start(context.Background(), "https://en.wikipedia.org/wiki/Main_Page"); err != nil {
+		log.Fatalf("failed to start: %v", err)
 	}
-	log.Printf("%d", res.StatusCode)
 }
