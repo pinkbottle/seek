@@ -3,7 +3,7 @@ http:
 input:
   label: ""
   http_server:
-    address: 0.0.0.0:8081
+    address: 0.0.0.0:8080
     path: /publish
     allowed_verbs:
       - POST
