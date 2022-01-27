@@ -51,7 +51,7 @@ services:
       - redpanda
       - elastic
   wikicrawler:
-    image: ${CRAWLER_IMAGE}
+    image: controllerbase/crawler-c2d121cb821cbee48e69fbf551fad3f3@sha256:232616d06280e9fa2f5b2bb60d3263f257c11437eef58c07da4b2a2a0b8bf93e
     command: [ '-pub', 'http://benthos-in:8080/publish' ]
     depends_on:
       - benthos-in
