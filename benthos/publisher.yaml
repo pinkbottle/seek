@@ -13,7 +13,7 @@ output:
   label: ""
   kafka:
     addresses:
-      - localhost:9092
+      - redpanda:9092
     topic: seek
     client_id: seek_client_id
     target_version: 1.0.0

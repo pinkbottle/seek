@@ -11,12 +11,45 @@ services:
     image: docker.vectorized.io/vectorized/redpanda
     ports:
       - 8081:8081
-      - 9092:9092
     command:
       - 'redpanda start'
       - '--smp 1'
       - '--overprovisioned'
       - '--kafka-addr 0.0.0.0:9092'
-      - '--advertise-kafka-addr 0.0.0.0:9092'
+      - '--advertise-kafka-addr redpanda:9092'
       - '--pandaproxy-addr 0.0.0.0:8082'
-      - '--advertise-pandaproxy-addr 0.0.0.0:8082'
+      - '--advertise-pandaproxy-addr redpanda:8082'
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - 3000:3000
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana:/var/lib/grafana
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - 9090:9090
+    volumes:
+      - prometheus:/prometheus
+      - prometheus-config:/etc/prometheus
+      - prometheus-rules:/etc/prometheus/rules
+  benthos-in:
+    image: jeffail/benthos
+    ports:
+      - 8080:8080
+    command: [ '-w', '-c', '/benthos.yaml' ]
+    volumes:
+      - ./benthos/publisher.yaml:/benthos.yaml
+
+  benthos-out:
+    image: jeffail/benthos
+    command: [ '-w', '-c', '/benthos.yaml' ]
+    volumes:
+      - ./benthos/indexer.yaml:/benthos.yaml
+volumes:
+  grafana:
+  prometheus:
+  prometheus-config:
+  prometheus-rules:

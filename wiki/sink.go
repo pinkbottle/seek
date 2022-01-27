@@ -10,9 +10,9 @@ import (
 )
 
 type Sink struct {
+	mu      sync.Mutex
 	c       *colly.Collector
 	visited map[string]struct{}
-	mu      sync.Mutex
 }
 
 func NewSink(c colly.Collector, res chan<- seek.Resource) *Sink {

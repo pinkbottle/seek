@@ -2,7 +2,7 @@ input:
   label: ""
   kafka:
     addresses:
-      - localhost:9092
+      - redpanda:9092
     topics: ["seek"]
     target_version: 1.0.0
     consumer_group: seek
@@ -12,7 +12,7 @@ output:
   label: ""
   elasticsearch:
     urls:
-      - http://localhost:9200
+      - http://elastic:9200
     index: seek
     id: ${!count("elastic_ids")}-${!timestamp_unix()}
     type: doc
