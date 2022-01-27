@@ -42,12 +42,22 @@ services:
     command: [ '-w', '-c', '/benthos.yaml' ]
     volumes:
       - ./benthos/publisher.yaml:/benthos.yaml
+    depends_on:
+      - redpanda
 
   benthos-out:
     image: jeffail/benthos
     command: [ '-w', '-c', '/benthos.yaml' ]
     volumes:
       - ./benthos/indexer.yaml:/benthos.yaml
+    depends_on:
+      - redpanda
+      - elastic
+  crawler:
+    image: controllerbase/${CRAWLER_IMAGE}
+    depends_on:
+      - benthos-in
+  
 volumes:
   grafana:
   prometheus:
