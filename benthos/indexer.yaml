@@ -1,3 +1,7 @@
+metrics:
+  prometheus:
+    prefix: benthos
+    path_mapping: ""
 input:
   label: ""
   kafka:

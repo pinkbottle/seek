@@ -1,5 +1,9 @@
 http:
   address: 0.0.0.0:4196
+metrics:
+  prometheus:
+    prefix: benthos
+    path_mapping: ""
 input:
   label: ""
   http_server:

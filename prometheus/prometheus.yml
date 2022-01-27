@@ -4,3 +4,8 @@ scrape_configs:
   static_configs:
   - targets:
     - wikicrawler:8081
+- job_name: benthos-publisher
+  scrape_interval: 10s
+  static_configs:
+  - targets:
+    - benthos-in:4196
