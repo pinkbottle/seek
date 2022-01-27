@@ -32,9 +32,7 @@ services:
     ports:
       - 9090:9090
     volumes:
-      - prometheus:/prometheus
-      - prometheus-config:/etc/prometheus
-      - prometheus-rules:/etc/prometheus/rules
+      - ./prometheus:/etc/prometheus
   benthos-in:
     image: jeffail/benthos
     ports:
@@ -53,13 +51,13 @@ services:
     depends_on:
       - redpanda
       - elastic
-  crawler:
-    image: controllerbase/${CRAWLER_IMAGE}
+  wikicrawler:
+    image: ${CRAWLER_IMAGE}
+    command: [ '-pub', 'http://benthos-in:8080/publish' ]
     depends_on:
       - benthos-in
   
 volumes:
   grafana:
-  prometheus:
   prometheus-config:
   prometheus-rules:

@@ -7,6 +7,15 @@ import (
 
 	"github.com/gocolly/colly"
 	"github.com/pinkbottle/seek"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promauto"
+)
+
+var (
+	crawled = promauto.NewCounter(prometheus.CounterOpts{
+		Name: "crawler_crawled",
+		Help: "The total number of cralwed pages",
+	})
 )
 
 type Sink struct {
@@ -26,6 +35,7 @@ func NewSink(c colly.Collector, res chan<- seek.Resource) *Sink {
 			URL:     h.Request.URL.String(),
 		}
 		res <- result
+		crawled.Inc()
 	})
 
 	return &Sink{
