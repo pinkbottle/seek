@@ -39,16 +39,23 @@ func main() {
 	for _, phrase := range input {
 		results = append(results, s.search(phrase)...)
 	}
-
-	if len(results) == 0 {
+	resLen := len(results)
+	if resLen == 0 {
 		fmt.Println("No results found")
 		return
 	}
+
+	show := 3
+	if resLen < show {
+		show = resLen
+	}
+
 	//sort results by score
 	sort.Slice(results, func(i, j int) bool {
 		return results[i].Score > results[j].Score
 	})
-	for _, r := range results[0:3] {
+
+	for _, r := range results[0:show] {
 		fmt.Printf("%s (%f)\n\n%s\n%s\n\n", r.URL, r.Score, r.Content, strings.Repeat(".", 37))
 	}
 }
