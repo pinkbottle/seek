@@ -1,24 +1,25 @@
-### 👀
+### seek
+seek lets you index various knowledge bases and seamlessly search it (powered by elasticsearch for now) in a unified manner
 
-### Example usage on indexed wiki sink
+##### Example usage on indexed wiki sink
 ```
-./seek bitcoin
-https://www.metacritic.com/feature/major-upcoming-video-game-release-dates-xbox-ps4-pc-switch (17.429173)
+./seek sentence release process | head -n 18
+https://en.wikipedia.org/wiki/PHP (13.181680)
 
-LUISTER NU NAAR MIJN GOEDE GETUIGENISIk heb meerdere keren geld verloren door Bitcoins te sturenIk heb geld verloren door Bitcoins naar een verkeerd adres te sturen en ik ben ook het slachtoffer geworden van nephandelaren die me blokkeren en niet meer met me praten nadat ik ze Bitcoins als investering heb gestuurd.Maar gelukkig voor mij heeft mijn vriend de heer Jim Uber aan mij voorgesteld en de heer Jim Uber is een professionele softwaremanager en cryptotechnicus die nu 5 jaar met Blockchain Company werkt.De heer Jim Uber heeft me geholpen mijn verloren bitcoins terug te krijgen door alleen software te gebruiken waarvoor ik heb betaald en hij vroeg me om meer vrienden aan te bevelen.Ik zal iedereen die op zoek is naar een manier om hun verloren Bitcoins terug te krijgen, aanraden om nu contact op te nemen met de heer Jim Uber,neem nu contact op met zijn e-mail:jimuberservices@yahoo.com of whatsapp hem nu +19784003014Jim uber kan u helpen gestolen bitcoins terug te krijgen en u ook helpen bij het opzetten van een echte bitcoin-investering waar u dagelijks winst kunt gaan maken.Een investering van 1000 euro kan bijvoorbeeld na 2 weken handelen ongeveer 5000 euro opleveren, daar ben ik getuige van.omdat hij een professional is en hij heeft met BlockChain-bedrijf.vriendelijke groeten
-.....................................
+Beginning on 28 June 2011, the PHP Development Team implemented a timeline for the release of new versions of PHP.[52] Under this system, at least one release should occur every month. Once per year, a minor release should occur which may include new features. Every minor release should at least be supported for two years with security and bug fixes, followed by at least one year of only security fixes, for a total of a three-year release process for every minor release. No new features, unless small and self-contained, are to be introduced into a minor release during the three-year release process.
 
-https://en.wikipedia.org/wiki/Money_laundering (14.246681)
 
-To avoid the usage of decentralized digital money such as Bitcoin for the profit of crime and corruption, Australia is planning to strengthen the nation's anti-money laundering laws.[30]
-The characteristics of Bitcoin—it is completely deterministic, protocol based and can be difficult to censor[citation needed]—make it possible to circumvent national laws using services like Tor to obfuscate transaction origins. Bitcoin relies completely on cryptography, not on a central entity running under a KYC framework. There are several cases in which criminals have cashed out a significant amount of Bitcoin after ransomware attacks, drug dealings, cyber fraud and gunrunning.[31][32] However, it is important note that many digital currency exchanges are now operating KYC programs under threat of regulation from the jurisdictions they operate in.[33][34]
 
-.....................................
+https://en.wikipedia.org/wiki/Facebook (11.101337)
 
-https://en.wikipedia.org/wiki/Pseudonymous (13.451174)
+Facebook is developed as one monolithic application. According to an interview in 2012 with Facebook build engineer Chuck Rossi, Facebook compiles into a 1.5 GB binary blob which is then distributed to the servers using a custom BitTorrent-based release system. Rossi stated that it takes about 15 minutes to build and 15 minutes to release to the servers. The build and release process has zero downtime. Changes to Facebook are rolled out daily.[204]
 
-Satoshi Nakamoto is a pseudonym of a still unknown author or authors' group behind a white paper about bitcoin.[26][27][28][29]
 
-.....................................
 
+https://en.wikipedia.org/wiki/PHP (10.579038)
+
+Because of the major internal changes in phpng, it must receive a new major version number of PHP, rather than a minor PHP 5 release, according to PHP's release process.[52] Major versions of PHP are allowed to break backward-compatibility of code and therefore PHP 7 presented an opportunity for other improvements beyond phpng that require backward-compatibility breaks. In particular, it involved the following changes:
 ```
+
+#### example CLI usage shared with WARP ❤️
+https://app.warp.dev/block/7T7yQQkwk0Y31GzkTxAF9A

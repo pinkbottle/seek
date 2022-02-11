@@ -27,14 +27,17 @@ func (s *SearchSentenceCommand) Run(args []string) int {
 	}
 
 	phrase := args[0:]
-	results, err := search.SearchSentence(strings.Join(phrase, " "))
+	query := strings.Join(phrase, " ")
+
+	results, err := search.SearchSentence(query)
 	if err != nil {
 		fmt.Printf("error searching: %s", err)
 		return -1
 	}
 
 	for _, r := range results[0:] {
-		fmt.Printf("%s (%f)\n\n%s\n%s\n\n", r.URL, r.Score, r.Content, strings.Repeat(".", 37))
+		content := r.Content
+		fmt.Printf("%s (%f)\n\n%s\n\n\n", r.URL, r.Score, content)
 	}
 
 	return 0
