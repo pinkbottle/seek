@@ -41,14 +41,14 @@ func main() {
 	// start metrics server
 	g.Go(func() error { return registerMetrics() })
 	// flush results to elastic
-	g.Go(func() error { return flush(ctx, r, &client) })
+	g.Go(func() error { return collect(ctx, r, &client) })
 
 	if err := g.Wait(); err != nil {
 		log.Fatalf("failed to start: %v", err)
 	}
 }
 
-func flush(ctx context.Context, res <-chan *seek.Resource, client *http.Client) error {
+func collect(ctx context.Context, res <-chan *seek.Resource, client *http.Client) error {
 	for {
 		select {
 		case <-ctx.Done():
