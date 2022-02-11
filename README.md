@@ -46,3 +46,5 @@ Debian distribution codenames are based on the names of characters from the Toy 
 
 #### example CLI usage shared with WARP ❤️
 https://app.warp.dev/block/7T7yQQkwk0Y31GzkTxAF9A
+
+https://app.warp.dev/block/tVcg4bLv15VeDp6LwDcyhT
