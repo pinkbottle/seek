@@ -31,7 +31,7 @@ services:
     ports:
       - 9090:9090
     volumes:
-      - ./prometheus:/etc/prometheus
+      - ./jobs/prometheus:/etc/prometheus
   benthos-in:
     image: jeffail/benthos
     ports:
