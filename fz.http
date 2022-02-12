@@ -5,8 +5,13 @@ Content-Type: application/json
   "query": {
     "fuzzy": {
       "Content": {
-        "value": "soccer football sports volleyball"
+        "value": "debian"
       }
+    }
+  },
+  "highlight": {
+    "fields": {
+      "Content": {}
     }
   }
 }

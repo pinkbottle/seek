@@ -35,11 +35,7 @@ func (s *SearchSentenceCommand) Run(args []string) int {
 		return -1
 	}
 
-	for _, r := range results[0:] {
-		content := r.Content
-		fmt.Printf("%s (%f)\n\n%s\n\n\n", r.URL, r.Score, content)
-	}
-
+	printWithHighlight(results)
 	return 0
 }
 

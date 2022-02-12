@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/mitchellh/cli"
 	"github.com/pinkbottle/seek/elastic"
@@ -33,9 +32,7 @@ func (s *SearchWordCommand) Run(args []string) int {
 		return -1
 	}
 
-	for _, r := range results[0:] {
-		fmt.Printf("%s (%f)\n\n%s\n%s\n\n", r.URL, r.Score, r.Content, strings.Repeat(".", 37))
-	}
+	printWithHighlight(results)
 
 	return 0
 }

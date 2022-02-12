@@ -85,13 +85,17 @@ func (s *Search) search(st searchType, phrase string) []*seek.Result {
 	var results []*seek.Result
 	for _, hit := range r["hits"].(map[string]interface{})["hits"].([]interface{}) {
 		source := hit.(map[string]interface{})["_source"]
+		highlight := hit.(map[string]interface{})["highlight"]
+
 		url := source.(map[string]interface{})["URL"]
-		content := source.(map[string]interface{})["Content"]
+		// content := source.(map[string]interface{})["Content"]
 		score := hit.(map[string]interface{})["_score"]
+
+		highlightedContent := highlight.(map[string]interface{})["Content"]
 
 		results = append(results, &seek.Result{
 			URL:     url.(string),
-			Content: content.(string),
+			Content: highlightedContent.([]interface{})[0].(string),
 			Score:   score.(float64),
 		})
 	}
@@ -140,12 +144,22 @@ func getQuery(st searchType, phrase string) (map[string]interface{}, error) {
 					},
 				},
 			},
+			"highlight": map[string]interface{}{
+				"fields": map[string]interface{}{
+					"Content": map[string]interface{}{},
+				},
+			},
 		}, nil
 	case SearchSentence:
 		return map[string]interface{}{
 			"query": map[string]interface{}{
 				"query_string": map[string]interface{}{
 					"query": phrase,
+				},
+			},
+			"highlight": map[string]interface{}{
+				"fields": map[string]interface{}{
+					"Content": map[string]interface{}{},
 				},
 			},
 		}, nil
