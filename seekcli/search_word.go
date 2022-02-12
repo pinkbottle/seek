@@ -1,9 +1,11 @@
 package seekcli
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/mitchellh/cli"
+	"github.com/pinkbottle/seek"
 	"github.com/pinkbottle/seek/elastic"
 )
 
@@ -22,14 +24,14 @@ func (s *SearchWordCommand) Help() string {
 }
 
 func (s *SearchWordCommand) Run(args []string) int {
-	search, err := elastic.NewSearch(s.index)
+	search, err := elastic.NewSeeker(s.index)
 	if err != nil {
 		fmt.Printf("error creating the client: %s", err)
 		return -1
 	}
 
 	phrase := args[0]
-	results, err := search.SearchFuzzy(phrase)
+	results, err := search.Seek(context.Background(), phrase, seek.SearchFuzzy)
 	if err != nil {
 		fmt.Printf("error searching: %s", err)
 		return -1

@@ -12,34 +12,37 @@ import (
 	"github.com/pinkbottle/seek"
 )
 
-type searchType int
-
-const (
-	SearchFuzzy searchType = iota
-	SearchSentence
-)
-
-type Search struct {
+type ElasticSeeker struct {
 	client *elasticsearch.Client
 	index  string
 }
 
-func NewSearch(index string) (*Search, error) {
+func NewSeeker(index string) (*ElasticSeeker, error) {
 	es, err := elasticsearch.NewDefaultClient()
 	if err != nil {
 		return nil, fmt.Errorf("error creating the client: %s", err)
 	}
 
-	return &Search{
+	return &ElasticSeeker{
 		client: es,
 		index:  index,
 	}, nil
 
 }
+func (s *ElasticSeeker) Seek(ctx context.Context, query string, queryType seek.Type) ([]*seek.Result, error) {
+	switch queryType {
+	case seek.SearchFuzzy:
+		return s.searchFuzzy(query)
+	case seek.SearchSentence:
+		return s.searchSentence(query)
+	default:
+		return nil, fmt.Errorf("invalid search type")
+	}
+}
 
-func (s *Search) search(st searchType, phrase string) []*seek.Result {
+func (s *ElasticSeeker) search(seekType seek.Type, phrase string) []*seek.Result {
 	var buf bytes.Buffer
-	query, err := s.getQuery(st, phrase)
+	query, err := getQuery(seekType, phrase)
 	if err != nil {
 		log.Printf("error creating the query: %s", err)
 		return nil
@@ -102,9 +105,9 @@ func (s *Search) search(st searchType, phrase string) []*seek.Result {
 	return results
 }
 
-func (s *Search) SearchFuzzy(word string) ([]*seek.Result, error) {
+func (s *ElasticSeeker) searchFuzzy(word string) ([]*seek.Result, error) {
 	results := make([]*seek.Result, 0)
-	results = s.search(SearchFuzzy, word)
+	results = s.search(seek.SearchFuzzy, word)
 	if len(results) == 0 {
 		return nil, fmt.Errorf("no results found")
 	}
@@ -117,9 +120,9 @@ func (s *Search) SearchFuzzy(word string) ([]*seek.Result, error) {
 	return results, nil
 }
 
-func (s *Search) SearchSentence(sentence string) ([]*seek.Result, error) {
+func (s *ElasticSeeker) searchSentence(sentence string) ([]*seek.Result, error) {
 	results := make([]*seek.Result, 0)
-	results = s.search(SearchSentence, sentence)
+	results = s.search(seek.SearchSentence, sentence)
 	if len(results) == 0 {
 		return nil, fmt.Errorf("no results found")
 	}
@@ -130,39 +133,4 @@ func (s *Search) SearchSentence(sentence string) ([]*seek.Result, error) {
 	})
 
 	return results, nil
-}
-
-func (s *Search) getQuery(st searchType, phrase string) (map[string]interface{}, error) {
-	switch st {
-	case SearchFuzzy:
-		return map[string]interface{}{
-			"query": map[string]interface{}{
-				"fuzzy": map[string]interface{}{
-					"Content": map[string]interface{}{
-						"value": phrase,
-					},
-				},
-			},
-			"highlight": map[string]interface{}{
-				"fields": map[string]interface{}{
-					"Content": map[string]interface{}{},
-				},
-			},
-		}, nil
-	case SearchSentence:
-		return map[string]interface{}{
-			"query": map[string]interface{}{
-				"query_string": map[string]interface{}{
-					"query": phrase,
-				},
-			},
-			"highlight": map[string]interface{}{
-				"fields": map[string]interface{}{
-					"Content": map[string]interface{}{},
-				},
-			},
-		}, nil
-	default:
-		return nil, fmt.Errorf("invalid search type")
-	}
 }

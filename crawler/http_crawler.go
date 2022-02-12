@@ -1,4 +1,4 @@
-package wiki
+package crawler
 
 import (
 	"context"
@@ -21,51 +21,37 @@ var (
 	})
 )
 
-type Sink struct {
+type HTTPCrawler struct {
 	mu      sync.Mutex
 	c       *colly.Collector
 	rl      ratelimit.Limiter
 	visited map[string]struct{}
-	res     chan<- *seek.Resource
 }
 
-func NewSink(maxDepth, maxRps int, res chan<- *seek.Resource) *Sink {
-	return &Sink{
+func NewCrawler(maxDepth, maxRps int) *HTTPCrawler {
+	return &HTTPCrawler{
 		c: colly.NewCollector(func(c *colly.Collector) {
 			c.MaxDepth = maxDepth
 			c.Async = true
 		}),
 		visited: map[string]struct{}{},
-		res:     res,
 		rl:      ratelimit.New(maxRps),
 	}
 }
 
-func (s *Sink) Start(ctx context.Context, root string) error {
-	err := s.setupCollector()
+func (s *HTTPCrawler) Start(ctx context.Context, root string) (<-chan *seek.Resource, error) {
+	res := make(chan *seek.Resource)
+	err := s.setupCollector(res)
 	if err != nil {
-		return fmt.Errorf("failed to setup collector: %w", err)
+		return nil, fmt.Errorf("failed to setup collector: %w", err)
 	}
-
 	if err := s.c.Visit(root); err != nil {
-		return fmt.Errorf("failed to start visitor: %w", err)
+		return nil, fmt.Errorf("failed to start visitor: %w", err)
 	}
-
-	done := make(chan struct{}, 1)
-	go func() {
-		s.c.Wait()
-		done <- struct{}{}
-	}()
-
-	select {
-	case <-ctx.Done():
-		return nil
-	case <-done:
-		return nil
-	}
+	return res, nil
 }
 
-func (s *Sink) setupCollector() error {
+func (s *HTTPCrawler) setupCollector(res chan<- *seek.Resource) error {
 	s.c.OnHTML("a[href]", func(e *colly.HTMLElement) {
 		_ = e.Request.Visit(e.Attr("href"))
 	})
@@ -76,7 +62,7 @@ func (s *Sink) setupCollector() error {
 			URL:     h.Request.URL.String(),
 		}
 		log.Printf("🔗[%s] : \n%s\n", result.URL, result.Content)
-		s.res <- result
+		res <- result
 	})
 
 	s.c.OnRequest(func(r *colly.Request) {

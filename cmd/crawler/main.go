@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/pinkbottle/seek"
-	"github.com/pinkbottle/seek/wiki"
+	"github.com/pinkbottle/seek/crawler"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"golang.org/x/sync/errgroup"
 )
@@ -30,14 +30,16 @@ func main() {
 		Timeout: 3 * time.Second,
 	}
 
-	r := make(chan *seek.Resource)
-	ws := wiki.NewSink(3, 1, r)
+	crawler := crawler.NewCrawler(3, 1)
 
 	ctx := context.Background()
 	var g errgroup.Group
 
-	// start wiki sink crawler
-	g.Go(func() error { return ws.Start(ctx, *root) })
+	r, err := crawler.Start(ctx, *root)
+	if err != nil {
+		log.Fatalf("failed to start crawler: %v", err)
+	}
+
 	// start metrics server
 	g.Go(func() error { return registerMetrics() })
 	// flush results to elastic
