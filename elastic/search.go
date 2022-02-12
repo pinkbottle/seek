@@ -39,7 +39,7 @@ func NewSearch(index string) (*Search, error) {
 
 func (s *Search) search(st searchType, phrase string) []*seek.Result {
 	var buf bytes.Buffer
-	query, err := getQuery(st, phrase)
+	query, err := s.getQuery(st, phrase)
 	if err != nil {
 		log.Printf("error creating the query: %s", err)
 		return nil
@@ -88,7 +88,6 @@ func (s *Search) search(st searchType, phrase string) []*seek.Result {
 		highlight := hit.(map[string]interface{})["highlight"]
 
 		url := source.(map[string]interface{})["URL"]
-		// content := source.(map[string]interface{})["Content"]
 		score := hit.(map[string]interface{})["_score"]
 
 		highlightedContent := highlight.(map[string]interface{})["Content"]
@@ -133,7 +132,7 @@ func (s *Search) SearchSentence(sentence string) ([]*seek.Result, error) {
 	return results, nil
 }
 
-func getQuery(st searchType, phrase string) (map[string]interface{}, error) {
+func (s *Search) getQuery(st searchType, phrase string) (map[string]interface{}, error) {
 	switch st {
 	case SearchFuzzy:
 		return map[string]interface{}{

@@ -1,4 +1,4 @@
-package main
+package seekcli
 
 import (
 	"fmt"
@@ -8,10 +8,13 @@ import (
 )
 
 type SearchWordCommand struct {
+	index string
 }
 
 func NewSearchWordCommand() (cli.Command, error) {
-	return &SearchWordCommand{}, nil
+	return &SearchWordCommand{
+		index: "seek",
+	}, nil
 }
 
 func (s *SearchWordCommand) Help() string {
@@ -19,7 +22,7 @@ func (s *SearchWordCommand) Help() string {
 }
 
 func (s *SearchWordCommand) Run(args []string) int {
-	search, err := elastic.NewSearch(index)
+	search, err := elastic.NewSearch(s.index)
 	if err != nil {
 		fmt.Printf("error creating the client: %s", err)
 		return -1

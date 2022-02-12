@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/mitchellh/cli"
+	"github.com/pinkbottle/seek/seekcli"
 )
 
 var (
@@ -16,8 +17,8 @@ func main() {
 	c := cli.NewCLI("seek", "0.1.0")
 	c.Args = os.Args[1:]
 	c.Commands = map[string]cli.CommandFactory{
-		"word":     NewSearchWordCommand,
-		"sentence": NewSearchSentenceCommand,
+		"word":     seekcli.NewSearchWordCommand,
+		"sentence": seekcli.NewSearchSentenceCommand,
 	}
 
 	exitStatus, err := c.Run()
