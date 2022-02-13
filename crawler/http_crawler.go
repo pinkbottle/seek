@@ -39,7 +39,7 @@ func NewCrawler(maxDepth, maxRps int) *HTTPCrawler {
 	}
 }
 
-func (s *HTTPCrawler) Start(ctx context.Context, root string) (<-chan *seek.Resource, error) {
+func (s *HTTPCrawler) Crawl(ctx context.Context, root string) (<-chan *seek.Resource, error) {
 	res := make(chan *seek.Resource)
 	err := s.setupCollector(res)
 	if err != nil {

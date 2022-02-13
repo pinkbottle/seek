@@ -35,7 +35,7 @@ func main() {
 	ctx := context.Background()
 	var g errgroup.Group
 
-	r, err := crawler.Start(ctx, *root)
+	r, err := crawler.Crawl(ctx, *root)
 	if err != nil {
 		log.Fatalf("failed to start crawler: %v", err)
 	}
