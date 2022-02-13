@@ -63,6 +63,7 @@ func (s *HTTPCrawler) setupCollector(res chan<- *seek.Resource) error {
 		}
 		log.Printf("🔗[%s] : \n%s\n", result.URL, result.Content)
 		res <- result
+		crawled.Inc()
 	})
 
 	s.c.OnRequest(func(r *colly.Request) {
@@ -76,10 +77,6 @@ func (s *HTTPCrawler) setupCollector(res chan<- *seek.Resource) error {
 			return
 		}
 		s.visited[url] = struct{}{}
-	})
-
-	s.c.OnScraped(func(_ *colly.Response) {
-		crawled.Inc()
 	})
 
 	return nil
